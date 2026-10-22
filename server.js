@@ -40,8 +40,8 @@ function resolveFilePath(reqPath) {
     return null;
   }
 
-  // Intercept Next.js image optimization requests e.g. /_next/image?url=...
-  if (reqPath.startsWith('/_next/image')) {
+  // Intercept Next.js image optimization requests e.g. /_next/image?url=... or /next-assets/image?url=...
+  if (reqPath.startsWith('/_next/image') || reqPath.startsWith('/next-assets/image')) {
     try {
       const parsedUrl = new URL(reqPath, 'http://localhost:3000');
       const realUrl = parsedUrl.searchParams.get('url');
