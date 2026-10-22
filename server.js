@@ -4,7 +4,7 @@ const path = require('path');
 
 const PORT = parseInt(process.env.PORT, 10) || parseInt(process.argv[2], 10) || 3000;
 const BASE_DIR = __dirname;
-const PRIMARY_DIR = path.join(__dirname, 'www.yuvichaarfunnels.com');
+const PRIMARY_DIR = __dirname;
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -55,8 +55,8 @@ function resolveFilePath(reqPath) {
   // Prevent directory traversal
   const safePath = path.normalize(decodedPath).replace(/^(\.\.[\/\\])+/, '');
 
-  // 1. Try in primary web dir: www.yuvichaarfunnels.com
-  const candidate = path.join(PRIMARY_DIR, safePath);
+  // 1. Try in root workspace dir
+  const candidate = path.join(BASE_DIR, safePath);
   if (fs.existsSync(candidate)) {
     const stat = fs.statSync(candidate);
     if (stat.isDirectory()) {
@@ -67,12 +67,12 @@ function resolveFilePath(reqPath) {
     }
   }
 
-  // 2. Try in root workspace dir (for sibling asset folders e.g. vz-5ad9b308-4a4.b-cdn.net)
-  const candidateRoot = path.join(BASE_DIR, safePath);
-  if (fs.existsSync(candidateRoot)) {
-    const stat = fs.statSync(candidateRoot);
+  // 2. Fallback in PRIMARY_DIR: www.yuvichaarfunnels.com
+  const candidatePrimary = path.join(PRIMARY_DIR, safePath);
+  if (fs.existsSync(candidatePrimary)) {
+    const stat = fs.statSync(candidatePrimary);
     if (!stat.isDirectory()) {
-      return candidateRoot;
+      return candidatePrimary;
     }
   } else if (safePath.includes('vz-5ad9b308-4a4.b-cdn.net')) {
     // Fallback for HLS streams where only 360p/240p exists

@@ -20,16 +20,6 @@
   "rewrites": [
     { "source": "/api/contact", "destination": "/api/contact" },
     { "source": "/api/ugc-lead", "destination": "/api/contact" },
-    { "source": "/next-assets/(.*)", "destination": "/www.yuvichaarfunnels.com/next-assets/$1" },
-    { "source": "/_next/(.*)", "destination": "/www.yuvichaarfunnels.com/next-assets/$1" },
-    { "source": "/videos/(.*)", "destination": "/www.yuvichaarfunnels.com/videos/$1" },
-    { "source": "/vz-5ad9b308-4a4.b-cdn.net/(.*)", "destination": "/vz-5ad9b308-4a4.b-cdn.net/$1" },
-    { "source": "/res.cloudinary.com/(.*)", "destination": "/res.cloudinary.com/$1" },
-    { "source": "/figma/(.*)", "destination": "/www.yuvichaarfunnels.com/figma/$1" },
-    { "source": "/creators/(.*)", "destination": "/www.yuvichaarfunnels.com/creators/$1" },
-    { "source": "/js/(.*)", "destination": "/www.yuvichaarfunnels.com/js/$1" },
-    { "source": "/thank-you", "destination": "/www.yuvichaarfunnels.com/thank-you.html" },
-    { "source": "/", "destination": "/www.yuvichaarfunnels.com/index.html" },
-    { "source": "/(.*)", "destination": "/www.yuvichaarfunnels.com/$1" }
+    { "source": "/thank-you", "destination": "/thank-you.html" }
   ]
 }
