@@ -1,0 +1,14 @@
+[
+  {
+    "id": "sample123",
+    "submissionTimestamp": "2026-10-22T00:00:00.000Z",
+    "fullName": "Sample Client",
+    "brandName": "Brand Example",
+    "workEmail": "client@example.com",
+    "phone": "+91 9876543210",
+    "businessType": "D2C / E-commerce",
+    "videoCount": "5 videos",
+    "userAgent": "browser",
+    "ip": "127.0.0.1"
+  }
+]

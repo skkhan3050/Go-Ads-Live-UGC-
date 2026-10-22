@@ -1,0 +1,19 @@
+{
+  "name": "go-ads-live-ugc",
+  "version": "1.0.0",
+  "description": "GoAdsLive UGC Video Production Landing Page & Lead Capture Platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "ugc",
+    "video-production",
+    "landing-page",
+    "lead-capture",
+    "google-sheets-automation"
+  ],
+  "author": "Tarif Sakh",
+  "license": "ISC"
+}
