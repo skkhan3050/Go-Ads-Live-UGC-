@@ -585,13 +585,13 @@
                         ></div>
                         <video
                           src="videos/hero-video.mp4"
-                          poster="https://vz-5ad9b308-4a4.b-cdn.net/04cb2c94-739c-4d09-8e24-b489708b15c8/thumbnail_0dfc6984.jpg"
+                          poster="videos/hero-video-thumbnail.jpg"
                           class="preview-vid absolute inset-0 w-full h-full object-cover"
                           autoplay
                           muted
                           loop
                           playsinline
-                          preload="auto"
+                          preload="metadata"
                         ></video>
                         <div
                           class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent z-20 pointer-events-none"
@@ -1065,11 +1065,10 @@
                   src="videos/2.mp4"
                   poster="videos/2-thumbnail.jpg"
                   class="preview-vid absolute inset-0 size-full object-cover"
-                  autoplay
                   muted
                   loop
                   playsinline
-                  preload="auto"
+                  preload="none"
                 ></video>
                 <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
                   <span
@@ -1103,12 +1102,12 @@
               >
                 <video
                   src="videos/goadslive-work-showcase.mp4"
+                  poster="videos/goadslive-work-showcase-thumbnail.jpg"
                   class="preview-vid absolute inset-0 size-full object-cover"
-                  autoplay
                   muted
                   loop
                   playsinline
-                  preload="auto"
+                  preload="none"
                 ></video>
                 <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
                   <span
@@ -1142,12 +1141,12 @@
               >
                 <video
                   src="videos/lasya-care-nibedita-1.mp4"
+                  poster="videos/lasya-care-nibedita-1-thumbnail.jpg"
                   class="preview-vid absolute inset-0 size-full object-cover"
-                  autoplay
                   muted
                   loop
                   playsinline
-                  preload="auto"
+                  preload="none"
                 ></video>
                 <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
                   <span
@@ -1183,11 +1182,10 @@
                   src="videos/ecr-138.mp4"
                   poster="videos/ecr-138-thumbnail.jpg"
                   class="preview-vid absolute inset-0 size-full object-cover"
-                  autoplay
                   muted
                   loop
                   playsinline
-                  preload="auto"
+                  preload="none"
                 ></video>
                 <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
                   <span
@@ -1223,11 +1221,10 @@
                   src="videos/mobisell-2.mp4"
                   poster="videos/mobisell-2-thumbnail.jpg"
                   class="preview-vid absolute inset-0 size-full object-cover"
-                  autoplay
                   muted
                   loop
                   playsinline
-                  preload="auto"
+                  preload="none"
                 ></video>
                 <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
                   <span
@@ -1263,11 +1260,10 @@
                   src="videos/vid-wa0001.mp4"
                   poster="videos/vid-wa0001-thumbnail.jpg"
                   class="preview-vid absolute inset-0 size-full object-cover"
-                  autoplay
                   muted
                   loop
                   playsinline
-                  preload="auto"
+                  preload="none"
                 ></video>
                 <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
                   <span
@@ -3845,6 +3841,9 @@
           const spinner = document.getElementById('videoSpinner');
           if (!modal || !player) return;
 
+          // Pause all background preview videos to free 100% GPU/CPU for modal
+          pauseAllPreviewVideos();
+
           titleEl.textContent = title || "Featured Video";
           modal.style.display = 'flex';
           document.body.style.overflow = 'hidden';
@@ -3871,6 +3870,9 @@
           const player = document.getElementById('modalVideoPlayer');
           const spinner = document.getElementById('videoSpinner');
           if (!modal || !player) return;
+
+          // Pause all background preview videos to free 100% GPU/CPU for modal
+          pauseAllPreviewVideos();
 
           titleEl.textContent = data.title;
           modal.style.display = 'flex';
@@ -3933,6 +3935,8 @@
             modalHls.destroy();
             modalHls = null;
           }
+          // Resume preview for in-viewport videos
+          checkVisibleVideos();
         };
 
         window.hoverPortfolioVideo = function(card, idx) {
@@ -3947,7 +3951,7 @@
             vid.muted = true;
             vid.playsInline = true;
             vid.loop = true;
-            vid.preload = 'auto';
+            vid.preload = 'metadata';
             vid.style.cssText = 'position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 2; opacity: 0; transition: opacity 0.3s ease; pointer-events: none;';
             card.appendChild(vid);
 
@@ -3970,35 +3974,71 @@
                 if (playSpan) playSpan.style.opacity = '0';
               }).catch(function() {});
             }
-          }, 100);
+          }, 80);
         };
 
         window.leavePortfolioVideo = function(card, idx) {
           clearTimeout(card._hoverTimer);
           const vid = card.querySelector('video.preview-vid');
           const playSpan = card.querySelector('span.play-btn-circle');
-          if (vid) {
-            // Keep first 6 always visible, only reset others
-            if (idx > 5) {
-              vid.pause();
-              vid.currentTime = 0;
-              vid.style.opacity = '0';
-            }
+          if (vid && idx > 5) {
+            vid.pause();
+            vid.currentTime = 0;
+            vid.style.opacity = '0';
           }
           if (playSpan) playSpan.style.opacity = '1';
         };
 
-        // Autoplay preview videos on page load
-        function startPreviewVideos() {
+        function pauseAllPreviewVideos() {
           document.querySelectorAll('video.preview-vid').forEach(function(v) {
-            v.muted = true;
-            v.play().catch(function() {});
+            v.pause();
           });
         }
+
+        // Smart IntersectionObserver: only plays preview videos that are currently visible on screen
+        // Automatically pauses them when scrolled out of view to maintain 60fps buttery-smooth scrolling
+        let videoObserver = null;
+        function setupVideoObserver() {
+          if ('IntersectionObserver' in window) {
+            videoObserver = new IntersectionObserver(function(entries) {
+              entries.forEach(function(entry) {
+                const vid = entry.target;
+                if (entry.isIntersecting) {
+                  vid.muted = true;
+                  const playPromise = vid.play();
+                  if (playPromise !== undefined) {
+                    playPromise.catch(function() {});
+                  }
+                } else {
+                  vid.pause();
+                }
+              });
+            }, { threshold: 0.25 });
+
+            document.querySelectorAll('video.preview-vid').forEach(function(vid) {
+              videoObserver.observe(vid);
+            });
+          }
+        }
+
+        function checkVisibleVideos() {
+          if (!videoObserver) return;
+          document.querySelectorAll('video.preview-vid').forEach(function(vid) {
+            const rect = vid.getBoundingClientRect();
+            const inView = rect.top < window.innerHeight && rect.bottom > 0;
+            if (inView) {
+              vid.muted = true;
+              vid.play().catch(function() {});
+            } else {
+              vid.pause();
+            }
+          });
+        }
+
         if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', startPreviewVideos);
+          document.addEventListener('DOMContentLoaded', setupVideoObserver);
         } else {
-          startPreviewVideos();
+          setupVideoObserver();
         }
 
         const backdrop = document.getElementById('videoModalBackdrop');
