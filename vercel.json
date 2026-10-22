@@ -4,14 +4,14 @@
   "trailingSlash": false,
   "headers": [
     {
-      "source": "/videos/(.*)",
+      "source": "/videos/:path*",
       "headers": [
         { "key": "Accept-Ranges", "value": "bytes" },
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     },
     {
-      "source": "/(.*)\\.(css|js|jpg|jpeg|png|webp|svg|woff2|woff)",
+      "source": "/next-assets/:path*",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
