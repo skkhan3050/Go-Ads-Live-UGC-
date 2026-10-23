@@ -54,8 +54,34 @@ module.exports = async function handler(req, res) {
       businessType: sanitize(businessType) || 'D2C / E-commerce',
       videoCount: sanitize(videoCount) || '5 videos',
       userAgent: req.headers['user-agent'] || 'unknown',
-      ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown'
+      ip: req.headers['x-forwarded-for'] || (req.socket && req.socket.remoteAddress) || 'unknown'
     };
+
+    // Safe Local Storage: write to contacts.json if writable, or fall back to /tmp/contacts.json on read-only serverless platforms (Vercel)
+    try {
+      const contactsFile = path.join(process.cwd(), 'contacts.json');
+      let contacts = [];
+      if (fs.existsSync(contactsFile)) {
+        try {
+          contacts = JSON.parse(fs.readFileSync(contactsFile, 'utf8') || '[]');
+        } catch {
+          contacts = [];
+        }
+      }
+      contacts.unshift(submission);
+      fs.writeFileSync(contactsFile, JSON.stringify(contacts, null, 2), 'utf8');
+    } catch (fileErr) {
+      try {
+        const os = require('os');
+        const tmpFile = path.join(os.tmpdir(), 'contacts.json');
+        let tmpContacts = [];
+        if (fs.existsSync(tmpFile)) {
+          try { tmpContacts = JSON.parse(fs.readFileSync(tmpFile, 'utf8') || '[]'); } catch {}
+        }
+        tmpContacts.unshift(submission);
+        fs.writeFileSync(tmpFile, JSON.stringify(tmpContacts, null, 2), 'utf8');
+      } catch (tmpErr) {}
+    }
 
     // Forward to Google Sheet Webhook
     let webhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL || '';

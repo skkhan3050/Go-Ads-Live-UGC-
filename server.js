@@ -138,7 +138,7 @@ const server = http.createServer((req, res) => {
   if (req.method === 'POST' && (req.url.startsWith('/api/contact') || req.url.startsWith('/api/ugc-lead'))) {
     const chunks = [];
     req.on('data', chunk => chunks.push(chunk));
-    req.on('end', () => {
+    req.on('end', async () => {
       try {
         const bodyStr = Buffer.concat(chunks).toString('utf8');
         const data = JSON.parse(bodyStr || '{}');
@@ -175,30 +175,52 @@ const server = http.createServer((req, res) => {
           businessType: sanitize(businessType) || 'D2C / E-commerce',
           videoCount: sanitize(videoCount) || '5 videos',
           userAgent: req.headers['user-agent'] || 'unknown',
-          ip: req.socket.remoteAddress || 'unknown'
+          ip: req.headers['x-forwarded-for'] || (req.socket && req.socket.remoteAddress) || 'unknown'
         };
 
-        const contactsFile = path.join(BASE_DIR, 'contacts.json');
-        let contacts = [];
-        if (fs.existsSync(contactsFile)) {
-          try {
-            contacts = JSON.parse(fs.readFileSync(contactsFile, 'utf8') || '[]');
-          } catch {
-            contacts = [];
-          }
-        }
-        contacts.unshift(submission);
-        fs.writeFileSync(contactsFile, JSON.stringify(contacts, null, 2), 'utf8');
-
-        // Mirror backup
-        const mirrorContacts = path.join('c:', 'Users', 'TARIF SK', 'Downloads', 'www.yuvichaarfunnels.com', 'contacts.json');
+        // 4. Safe Local Storage: write to contacts.json if writable, or fall back to /tmp/contacts.json on read-only serverless platforms (Vercel)
         try {
-          fs.writeFileSync(mirrorContacts, JSON.stringify(contacts, null, 2), 'utf8');
+          const contactsFile = path.join(BASE_DIR, 'contacts.json');
+          let contacts = [];
+          if (fs.existsSync(contactsFile)) {
+            try {
+              contacts = JSON.parse(fs.readFileSync(contactsFile, 'utf8') || '[]');
+            } catch {
+              contacts = [];
+            }
+          }
+          contacts.unshift(submission);
+          fs.writeFileSync(contactsFile, JSON.stringify(contacts, null, 2), 'utf8');
+        } catch (fileErr) {
+          // Vercel / AWS Lambda environment is read-only (/var/task). Fallback to writable /tmp
+          try {
+            const os = require('os');
+            const tmpFile = path.join(os.tmpdir(), 'contacts.json');
+            let tmpContacts = [];
+            if (fs.existsSync(tmpFile)) {
+              try { tmpContacts = JSON.parse(fs.readFileSync(tmpFile, 'utf8') || '[]'); } catch {}
+            }
+            tmpContacts.unshift(submission);
+            fs.writeFileSync(tmpFile, JSON.stringify(tmpContacts, null, 2), 'utf8');
+          } catch (tmpErr) {}
+        }
+
+        // Mirror backup (local development fallback)
+        try {
+          const mirrorContacts = path.join('c:', 'Users', 'TARIF SK', 'Downloads', 'www.yuvichaarfunnels.com', 'contacts.json');
+          if (fs.existsSync(path.dirname(mirrorContacts))) {
+            let mirrorList = [submission];
+            if (fs.existsSync(mirrorContacts)) {
+              try { mirrorList = JSON.parse(fs.readFileSync(mirrorContacts, 'utf8') || '[]'); } catch {}
+              mirrorList.unshift(submission);
+            }
+            fs.writeFileSync(mirrorContacts, JSON.stringify(mirrorList, null, 2), 'utf8');
+          }
         } catch (e) {}
 
         console.log(`[UGC Lead Received] ${submission.fullName} (${submission.brandName}) | ${submission.workEmail} | ${submission.businessType} | ${submission.videoCount}`);
 
-        // Google Sheet Webhook Sync (Target: https://docs.google.com/spreadsheets/d/1yCrLBPz5VAi9FrLb8I9QZFFDAgvtkvmb-F9mkyxHhZg/edit)
+        // 5. Google Sheet Webhook Sync (Target: https://docs.google.com/spreadsheets/d/1yCrLBPz5VAi9FrLb8I9QZFFDAgvtkvmb-F9mkyxHhZg/edit)
         try {
           const configFile = path.join(BASE_DIR, 'google-sheet-config.json');
           let webhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL || '';
@@ -220,17 +242,18 @@ const server = http.createServer((req, res) => {
               phone: (submission.phone && submission.phone.startsWith('+')) ? ("'" + submission.phone) : submission.phone
             };
 
-            fetch(webhookUrl, {
-              method: 'POST',
-              redirect: 'follow',
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify(sheetPayload)
-            }).then(async (sheetRes) => {
+            try {
+              const sheetRes = await fetch(webhookUrl, {
+                method: 'POST',
+                redirect: 'follow',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(sheetPayload)
+              });
               const sheetText = await sheetRes.text();
               console.log(`[Google Sheet Response] Status: ${sheetRes.status} | Body: ${sheetText}`);
-            }).catch((sheetErr) => {
+            } catch (sheetErr) {
               console.error(`[Google Sheet Forwarding Error] ${sheetErr.message}`);
-            });
+            }
           } else {
             console.log(`[Google Sheet] Webhook URL is pending setup in google-sheet-config.json`);
           }
@@ -276,7 +299,11 @@ const server = http.createServer((req, res) => {
           if (body.webhookUrl !== undefined) {
             cfg.webhookUrl = String(body.webhookUrl).trim();
           }
-          fs.writeFileSync(configFile, JSON.stringify(cfg, null, 2), 'utf8');
+          try {
+            fs.writeFileSync(configFile, JSON.stringify(cfg, null, 2), 'utf8');
+          } catch (writeErr) {
+            console.warn('[Config] Could not write config file (read-only filesystem):', writeErr.message);
+          }
           res.writeHead(200, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ success: true, config: cfg }));
         } catch (e) {
