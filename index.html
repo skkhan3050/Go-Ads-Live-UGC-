@@ -13,13 +13,18 @@
           m.style.setProperty('opacity', '1', 'important');
           m.style.setProperty('pointer-events', 'auto', 'important');
           document.body.style.overflow = 'hidden';
+          document.body.classList.add('modal-open');
+          var wa = document.querySelector('.float-btn.whatsapp');
+          if (wa) wa.style.setProperty('display', 'none', 'important');
           var card = document.getElementById('contact-modal-card');
           if (card) {
             card.style.setProperty('transform', 'scale(1)', 'important');
             card.style.setProperty('opacity', '1', 'important');
           }
-          var input = m.querySelector('input[name="fullName"]');
-          if (input) setTimeout(function() { input.focus(); }, 120);
+          if (window.innerWidth >= 768) {
+            var input = m.querySelector('input[name="fullName"]');
+            if (input) setTimeout(function() { input.focus(); }, 120);
+          }
         }
       };
       window.closeContactModal = function() {
@@ -28,6 +33,9 @@
           m.classList.remove('is-open');
           m.style.setProperty('display', 'none', 'important');
           document.body.style.overflow = '';
+          document.body.classList.remove('modal-open');
+          var wa = document.querySelector('.float-btn.whatsapp');
+          if (wa) wa.style.setProperty('display', 'flex', 'important');
         }
       };
     </script>
@@ -8597,12 +8605,136 @@ body {
         display: inline;
       }
 
-      /* Modal card and backdrop */
+      /* Hide floating whatsapp button whenever modal is open */
+      body.modal-open .float-btn.whatsapp,
+      #contact-modal.is-open ~ .float-btn.whatsapp,
+      #contact-modal[style*="display: flex"] ~ .float-btn.whatsapp {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+      }
+
+      /* Modal backdrop & full screen scrollable container */
+      #contact-modal {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        z-index: 9999999 !important;
+        background-color: rgba(0, 0, 0, 0.78) !important;
+        backdrop-filter: blur(8px) !important;
+        -webkit-backdrop-filter: blur(8px) !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        box-sizing: border-box !important;
+        display: none;
+        justify-content: center !important;
+        align-items: flex-start !important;
+        padding: 16px 12px 48px 12px !important;
+      }
       #contact-modal.is-open {
         animation: ugcBackdropFade 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       }
+      #contact-modal #contact-modal-card {
+        position: relative !important;
+        width: 100% !important;
+        max-width: 580px !important;
+        margin: 12px auto 36px auto !important;
+        border-radius: 24px !important;
+        box-sizing: border-box !important;
+        transition: transform 0.25s ease, opacity 0.25s ease !important;
+      }
       #contact-modal.is-open #contact-modal-card {
         animation: ugcModalPop 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+
+      /* Desktop center if viewport is tall enough */
+      @media (min-width: 641px) and (min-height: 860px) {
+        #contact-modal {
+          align-items: center !important;
+        }
+        #contact-modal #contact-modal-card {
+          margin: auto !important;
+        }
+      }
+
+      /* Mobile Specific Enhancements (< 640px) */
+      @media (max-width: 640px) {
+        #contact-modal {
+          padding: 8px 10px 48px 10px !important;
+          align-items: flex-start !important;
+        }
+        #contact-modal #contact-modal-card {
+          margin: 6px auto 32px auto !important;
+          border-radius: 18px !important;
+          padding: 18px 14px 22px 14px !important;
+          max-height: none !important;
+          overflow: visible !important;
+          box-shadow: 0 16px 45px -10px rgba(13, 10, 20, 0.35) !important;
+        }
+        #contact-modal-card .ugc-live-badge {
+          font-size: 10px !important;
+          padding: 2px 8px !important;
+          margin-bottom: 6px !important;
+        }
+        #contact-modal-card #modal-heading {
+          font-size: 19px !important;
+          line-height: 1.25 !important;
+        }
+        #contact-modal-card .modal-subtitle {
+          font-size: 11.5px !important;
+          line-height: 1.4 !important;
+          margin-top: 4px !important;
+        }
+        #contact-modal-card .modal-header-box {
+          margin-bottom: 14px !important;
+        }
+        #modal-contact-form {
+          gap: 10px !important;
+        }
+        #modal-contact-form .modal-field-grid {
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 10px !important;
+        }
+        #modal-contact-form .ugc-label {
+          font-size: 11px !important;
+          margin-bottom: 4px !important;
+          gap: 5px !important;
+        }
+        #modal-contact-form .ugc-input {
+          padding: 10px 12px !important;
+          font-size: 15px !important;
+          height: 44px !important;
+          border-radius: 10px !important;
+        }
+        #modal-contact-form .ugc-submit-btn {
+          height: 48px !important;
+          font-size: 14.5px !important;
+          border-radius: 11px !important;
+        }
+        #modal-contact-form .ugc-trust-row {
+          gap: 6px 8px !important;
+          padding-top: 4px !important;
+          font-size: 10.5px !important;
+        }
+        #modal-contact-form .ugc-trust-badge {
+          padding: 2.5px 8px !important;
+          font-size: 10.5px !important;
+        }
+        #close-contact-modal {
+          top: 10px !important;
+          right: 10px !important;
+          width: 36px !important;
+          height: 36px !important;
+          padding: 6px !important;
+          background: rgba(0, 0, 0, 0.05) !important;
+        }
       }
 
       /* Card styling */
@@ -11055,16 +11187,17 @@ body {
       ]);
     </script>
     <!-- Contact / Lead Modal for UGC Video Creation -->
+    <!-- Contact / Lead Modal for UGC Video Creation -->
     <div
       id="contact-modal"
-      style="display: none; position: fixed; inset: 0; z-index: 99999; align-items: center; justify-content: center; padding: 1rem; background-color: rgba(0, 0, 0, 0.72); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);"
+      style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; height: 100dvh; z-index: 9999999; justify-content: center; align-items: flex-start; padding: 12px 10px 48px 10px; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; background-color: rgba(0, 0, 0, 0.78); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-sizing: border-box;"
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-heading"
     >
       <div
         id="contact-modal-card"
-        class="relative w-full max-w-xl mx-auto rounded-3xl p-6 sm:p-9 max-h-[92vh] overflow-y-auto ugc-luxury-card overflow-hidden"
+        class="relative w-full max-w-xl mx-auto rounded-2xl sm:rounded-3xl p-4 sm:p-9 ugc-luxury-card"
       >
         <!-- Decorative ambient glow orbs -->
         <div class="pointer-events-none absolute -top-16 -right-16 w-48 h-48 rounded-full bg-[#457aff]/15 blur-3xl" aria-hidden="true"></div>
@@ -11074,7 +11207,7 @@ body {
         <button
           type="button"
           id="close-contact-modal"
-          class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 transition-all duration-200 p-2.5 rounded-xl hover:bg-gray-100 hover:rotate-90 cursor-pointer z-20"
+          class="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-gray-800 transition-all duration-200 p-2 sm:p-2.5 rounded-xl bg-black/5 hover:bg-black/10 cursor-pointer z-30"
           aria-label="Close modal"
         >
           <svg
@@ -11093,23 +11226,23 @@ body {
         </button>
 
         <!-- Modal Header with Pulsing Live Dot & Gradient Text -->
-        <div class="mb-7 text-center relative z-10">
+        <div class="mb-4 sm:mb-7 text-center relative z-10 modal-header-box">
           <div
-            class="inline-flex items-center gap-2 rounded-full border border-[rgba(69,122,255,0.25)] bg-[rgba(69,122,255,0.08)] px-3.5 py-1.5 text-[11px] font-bold text-[#457aff] tracking-wider uppercase mb-3 mx-auto shadow-sm"
+            class="ugc-live-badge inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-[rgba(69,122,255,0.25)] bg-[rgba(69,122,255,0.08)] px-3 py-1 sm:px-3.5 sm:py-1.5 text-[10px] sm:text-[11px] font-bold text-[#457aff] tracking-wider uppercase mb-2 sm:mb-3 mx-auto shadow-sm"
           >
             <span class="ugc-live-dot"></span>
             UGC VIDEO CREATION
           </div>
-          <h3 id="modal-heading" class="text-2xl sm:text-[28px] font-extrabold text-[#0d0a14] tracking-tight leading-tight text-center">
+          <h3 id="modal-heading" class="text-xl sm:text-[28px] font-extrabold text-[#0d0a14] tracking-tight leading-tight text-center">
             Let's Create <span class="ugc-gradient-title">UGC Videos</span> for Your Brand
           </h3>
-          <p class="mt-2 text-xs sm:text-sm text-[#4b4b4b] max-w-sm mx-auto text-center">
+          <p class="modal-subtitle mt-1.5 sm:mt-2 text-xs sm:text-sm text-[#4b4b4b] max-w-sm mx-auto text-center">
             Tell us about your brand, product, and video requirements. We&#x27;ll review your brief and discuss a suitable UGC content plan.
           </p>
         </div>
 
         <!-- Modal UGC Form -->
-        <form id="modal-contact-form" novalidate style="display: flex; flex-direction: column; gap: 20px; position: relative; z-index: 10;">
+        <form id="modal-contact-form" novalidate style="display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 10;">
           <!-- Honeypot spam trap -->
           <input
             type="text"
@@ -11121,7 +11254,7 @@ body {
           />
 
           <!-- Field 1 & Field 2 -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px 24px;">
+          <div class="modal-field-grid grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
             <div>
               <label
                 for="modal-fullName"
@@ -11159,7 +11292,7 @@ body {
           </div>
 
           <!-- Field 3 & Field 4 -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px 24px;">
+          <div class="modal-field-grid grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
             <div>
               <label
                 for="modal-workEmail"
@@ -11197,7 +11330,7 @@ body {
           </div>
 
           <!-- Field 5 & Field 6 -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px 24px;">
+          <div class="modal-field-grid grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
             <div>
               <label
                 for="modal-businessType"
@@ -11346,14 +11479,19 @@ body {
           m.style.setProperty('opacity', '1', 'important');
           m.style.setProperty('pointer-events', 'auto', 'important');
           document.body.style.overflow = 'hidden';
+          document.body.classList.add('modal-open');
+          const wa = document.querySelector('.float-btn.whatsapp');
+          if (wa) wa.style.setProperty('display', 'none', 'important');
           const card = document.getElementById('contact-modal-card');
           if (card) {
             card.style.setProperty('transform', 'scale(1)', 'important');
             card.style.setProperty('opacity', '1', 'important');
           }
           ensureAutoSelect(m);
-          const firstInput = m.querySelector('input[name="fullName"]');
-          if (firstInput) setTimeout(() => firstInput.focus(), 150);
+          if (window.innerWidth >= 768) {
+            const firstInput = m.querySelector('input[name="fullName"]');
+            if (firstInput) setTimeout(() => firstInput.focus(), 150);
+          }
         }
 
         function closeModal() {
@@ -11362,6 +11500,9 @@ body {
           m.classList.remove('is-open');
           m.style.setProperty('display', 'none', 'important');
           document.body.style.overflow = '';
+          document.body.classList.remove('modal-open');
+          const wa = document.querySelector('.float-btn.whatsapp');
+          if (wa) wa.style.setProperty('display', 'flex', 'important');
         }
 
         window.openContactModal = openModal;
