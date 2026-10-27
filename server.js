@@ -77,15 +77,15 @@ function resolveFilePath(reqPath) {
   } else if (safePath.includes('vz-5ad9b308-4a4.b-cdn.net')) {
     // Fallback for HLS streams where only 360p/240p exists
     if (safePath.endsWith('.m3u8')) {
-      const dir = path.dirname(candidateRoot);
+      const dir = path.dirname(candidate);
       const parent = path.dirname(dir);
       const fallback360 = path.join(parent, '360p', 'video.m3u8');
       if (fs.existsSync(fallback360)) return fallback360;
       const fallback240 = path.join(parent, '240p', 'video.m3u8');
       if (fs.existsSync(fallback240)) return fallback240;
     } else if (safePath.endsWith('.ts')) {
-      const filename = path.basename(candidateRoot);
-      const dir = path.dirname(candidateRoot);
+      const filename = path.basename(candidate);
+      const dir = path.dirname(candidate);
       const parent = path.dirname(dir);
       const in360 = path.join(parent, '360p', filename);
       if (fs.existsSync(in360)) return in360;

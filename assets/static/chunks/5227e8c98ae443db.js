@@ -2521,7 +2521,7 @@ Read more: https://nextjs.org/docs/messages/next-image-unconfigured-localpattern
               "data-open-contact": "true",
               "data-voice-id": s,
               className: o,
-              children: "BOOK A CALL NOW",
+              children: e.children || (s === "portfolio-cta" ? "Create Your Next UGC Video" : (s === "home-cta-button" ? "Discuss Your UGC Project" : "Book a Free UGC Call")),
             })),
             (i[0] = o),
             (i[1] = s),
@@ -2602,27 +2602,10 @@ Read more: https://nextjs.org/docs/messages/next-image-unconfigured-localpattern
                   "max-w-[13rem] sm:max-w-[16rem] lg:max-w-[20rem] space-y-3 sm:space-y-5",
                 children: [
                   n,
-                  (0, t.jsxs)("p", {
+                  (0, t.jsx)("p", {
                     className:
-                      "text-white text-lg sm:text-2xl lg:text-[2.15rem] font-medium leading-[0.95] tracking-tight",
-                    children: [
-                      "We ",
-                      a,
-                      i,
-                      "People",
-                      s,
-                      "Scrolling On",
-                      o,
-                      "Social Media",
-                      c,
-                      "Into Your",
-                      d,
-                      "Paying ",
-                      (0, t.jsx)("strong", {
-                        className: "font-extrabold",
-                        children: "Customers",
-                      }),
-                    ],
+                      "text-white text-lg sm:text-2xl lg:text-[2.15rem] font-medium leading-[1.1] tracking-tight",
+                    children: "We Turn Product Stories Into Scroll-Stopping UGC.",
                   }),
                 ],
               }),
@@ -2716,7 +2699,7 @@ Read more: https://nextjs.org/docs/messages/next-image-unconfigured-localpattern
           ? ((e = (0, t.jsx)("p", {
               className:
                 "m-0 flex flex-wrap items-center justify-center gap-[11px] font-sf text-[14px] leading-[33px] text-[#b4b4b4] md:justify-start md:[font-family:inherit] md:text-[15px]",
-              children: ["Kolkata", "Park Circus"].map(p),
+              children: "UGC VIDEO PRODUCTION FOR GROWING BRANDS",
             })),
             (n[0] = e))
           : (e = n[0]),
@@ -2757,16 +2740,7 @@ Read more: https://nextjs.org/docs/messages/next-image-unconfigured-localpattern
           ? ((n = (0, t.jsxs)("h1", {
               className:
                 "mt-[24px] max-w-[294px] pl-[32px] font-sf text-[32px] font-semibold leading-[34px] tracking-[-1.456px] text-[#393939] box-content md:mt-3 md:max-w-[17ch] md:pl-0 md:[font-family:inherit] md:text-[44px] md:font-extrabold md:leading-[1.08] md:tracking-[-1.6px] lg:text-[50px]",
-              children: [
-                (0, t.jsx)("span", {
-                  className: "block",
-                  children: "Your Next Winning Ad Delivered In 7 days.",
-                }),
-                (0, t.jsx)("span", {
-                  className: "block",
-                  children: "If It Doesn’t Perform, You Don’t Pay.",
-                }),
-              ],
+              children: "Your Next Winning UGC Video Starts Here.",
             })),
             (m[1] = n))
           : (n = m[1]),
@@ -2774,11 +2748,7 @@ Read more: https://nextjs.org/docs/messages/next-image-unconfigured-localpattern
           ? ((a = (0, t.jsxs)("p", {
               className:
                 "mt-[19px] max-w-[276px] pl-[39px] font-sf text-[16px] font-medium leading-[25.08px] text-[#4b4b4b] box-content md:mt-5 md:max-w-[46ch] md:pl-0 md:[font-family:inherit] md:text-[17px] md:font-normal md:leading-[28px]",
-              children: [
-                "Start With A Trial Creative Sprint Of 8 Ads Delivered in 7 Working Days.",
-                (0, t.jsx)("br", {}),
-                "Investment: ₹1 Lakh + GST",
-              ],
+              children: "Creator-led videos built around your product, your customers, and the reasons people buy. Create authentic, scroll-stopping content designed to build trust and inspire action.",
             })),
             (m[2] = a))
           : (a = m[2]),
@@ -3022,26 +2992,6 @@ Read more: https://nextjs.org/docs/messages/next-image-unconfigured-localpattern
           poster: `${p}/8ee9b044-19fc-4f95-9587-b630f77a4307/thumbnail.jpg`,
           hlsUrl: `${p}/8ee9b044-19fc-4f95-9587-b630f77a4307/playlist.m3u8`,
         },
-        {
-          title: "Spinemat",
-          poster: `${p}/32d21443-4200-4d17-99a2-68005e38fd33/thumbnail.jpg`,
-          hlsUrl: `${p}/32d21443-4200-4d17-99a2-68005e38fd33/playlist.m3u8`,
-        },
-        {
-          title: "Ravan AI",
-          poster: `${p}/5f9687dd-ecfb-4b15-ad00-84c98e6b9e2e/thumbnail.jpg`,
-          hlsUrl: `${p}/5f9687dd-ecfb-4b15-ad00-84c98e6b9e2e/playlist.m3u8`,
-        },
-        {
-          title: "Atmos",
-          poster: `${p}/349c5b19-2212-446a-8e7b-fb2e8fde56cf/thumbnail.jpg`,
-          hlsUrl: `${p}/349c5b19-2212-446a-8e7b-fb2e8fde56cf/playlist.m3u8`,
-        },
-        {
-          title: "Asli Gems",
-          poster: `${p}/304f4db6-7aed-4355-b1f0-58b26303c444/thumbnail.jpg`,
-          hlsUrl: `${p}/304f4db6-7aed-4355-b1f0-58b26303c444/playlist.m3u8`,
-        },
       ];
     function h(e) {
       let a,
@@ -3178,10 +3128,19 @@ Read more: https://nextjs.org/docs/messages/next-image-unconfigured-localpattern
         c = (0, r.c)(5);
       return (
         c[0] === Symbol.for("react.memo_cache_sentinel")
-          ? ((e = (0, t.jsx)("h2", {
-              className:
-                "m-0 pl-[6px] font-sf text-[24px] font-semibold leading-[35px] text-black md:pl-0 md:[font-family:inherit] md:text-[40px] md:font-extrabold md:leading-[1.15] md:tracking-[-1.2px] md:text-[#0d0a14]",
-              children: "See Our Portfolio",
+          ? ((e = (0, t.jsxs)("div", {
+              className: "mb-3",
+              children: [
+                (0, t.jsx)("h2", {
+                  className:
+                    "m-0 pl-[6px] font-sf text-[24px] font-semibold leading-[35px] text-black md:pl-0 md:[font-family:inherit] md:text-[40px] md:font-extrabold md:leading-[1.15] md:tracking-[-1.2px] md:text-[#0d0a14]",
+                  children: "UGC Videos That Bring Products to Life",
+                }),
+                (0, t.jsx)("p", {
+                  className: "mt-2 pl-[6px] text-sm text-[#6b7280] md:pl-0 md:text-base",
+                  children: "Explore authentic product demonstrations, creator testimonials, unboxing experiences, lifestyle videos, and relatable brand stories.",
+                }),
+              ],
             })),
             (c[0] = e))
           : (e = c[0]),
@@ -3234,7 +3193,7 @@ Read more: https://nextjs.org/docs/messages/next-image-unconfigured-localpattern
                   s,
                   (0, t.jsx)("div", {
                     className: "mt-[23px] flex justify-center md:mt-8",
-                    children: (0, t.jsx)(l.default, {}),
+                    children: (0, t.jsx)(l.default, { voiceId: "portfolio-cta" }),
                   }),
                 ],
               }),
@@ -3264,7 +3223,7 @@ Read more: https://nextjs.org/docs/messages/next-image-unconfigured-localpattern
       {
         id: 1,
         label: "Production Reel — 2025",
-        src: "https://res.cloudinary.com/dvxqb1wge/video/upload/v1773657403/25ac9ad3-ab7e-4cf3-b5e2-8346fcade600_ehfif0.mp4",
+        src: "/videos/production-reel.mp4",
       },
       {
         id: 2,
@@ -3476,14 +3435,14 @@ Read more: https://nextjs.org/docs/messages/next-image-unconfigured-localpattern
               className: "mb-[60px] lg:mb-8",
               children: [
                 N,
-                (0, t.jsxs)("h2", {
+                (0, t.jsx)("h2", {
                   className:
                     "text-[30.4px] font-extrabold leading-[36.48px] tracking-[-0.912px] text-[#0d0a14] lg:text-4xl lg:leading-tight lg:tracking-normal",
-                  children: [
-                    "Team Yuvichaar",
-                    (0, t.jsx)("br", {}),
-                    "Behind The Scenes",
-                  ],
+                  children: "The Creative Team Behind Every UGC Story",
+                }),
+                (0, t.jsx)("p", {
+                  className: "mt-2 text-sm text-[#6b7280] max-w-xl lg:text-base",
+                  children: "From the first concept to the final edit, we shape your product story into authentic, engaging videos that feel relatable to your audience.",
                 }),
               ],
             })),
